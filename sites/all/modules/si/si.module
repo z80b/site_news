@@ -25,6 +25,20 @@ function si_block_view($delta = '') {
 	return $block;
 }
 
+function si_block_configure($delta = '') {
+	return array ('si_block_conf' => array (
+		'#type' => 'select',
+		'#title' => t('Teasers count'),
+		'#description' => t('Count of news teasers in region'),
+		'#default_value' => variable_get('si_block_config', NEWS_TEASERS_COUNT),
+		'#options' => drupal_map_assoc(range(2, 10)),
+	));
+}
+
+function si_block_save($delta = '', $edit = array()) {
+  variable_set('si_block_config', $edit['si_block_conf']);
+}
+
 function nodes_views_by_type($type, $limit = 5, $offset = 0) {
 	$views = '';
 
