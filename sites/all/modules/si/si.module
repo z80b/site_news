@@ -1,0 +1,46 @@
+<?php
+
+define('NEWS_TEASERS_COUNT', 3);
+
+function si_block_info() {
+	//die(1);
+	return array (
+		'softintegro_news_teasers' => array (
+			'info' => t('News teasers block'),
+		),
+	);
+}
+
+function si_block_view($delta = '') {
+	$block = array('content' => '');
+	switch ($delta) {
+		case 'softintegro_news_teasers':
+			$block['content'] = nodes_views_by_type('news', variable_get('si_block_config', NEWS_TEASERS_COUNT));
+			break;
+		
+		default:
+			// -----
+			break;
+	}
+	return $block;
+}
+
+function nodes_views_by_type($type, $limit = 5, $offset = 0) {
+	$views = '';
+
+	$nids = db_select('node', 'n')
+		->fields('n', array('nid', 'created'))
+		->condition('type', $type)
+		->condition('status', 1)
+		->orderBy('created', 'DESC')
+		->range($offset, $limit)
+		->addTag('node_access')
+		->execute()
+		->fetchCol();
+	foreach ($nids as $nid) {
+		$view = node_view(node_load($nid), 'teaser');
+		$views.= drupal_render($view);
+		
+	}
+	return $views;
+}
