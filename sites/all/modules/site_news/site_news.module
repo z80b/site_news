@@ -2,46 +2,41 @@
 
 define('NEWS_TEASERS_COUNT', 3);
 
-function si_block_info() {
-	//die(1);
+function site_news_block_info() {
 	return array (
-		'softintegro_news_teasers' => array (
+		'site_news_teasers' => array (
 			'info' => t('News teasers block'),
 		),
 	);
 }
 
-function si_block_view($delta = '') {
-	$block = array('content' => '');
+function site_news_block_view($delta = '') {
 	switch ($delta) {
-		case 'softintegro_news_teasers':
-			$block['content'] = nodes_views_by_type('news', variable_get('si_block_config', NEWS_TEASERS_COUNT));
+		case 'site_news_teasers':
+			return array('content' => nodes_views_by_type('news', variable_get('site_news_block_config', NEWS_TEASERS_COUNT)));
 			break;
-		
 		default:
-			// -----
+			return array('content' => '');
 			break;
 	}
-	return $block;
 }
 
-function si_block_configure($delta = '') {
-	return array ('si_block_conf' => array (
+function site_news_block_configure($delta = '') {
+	return array ('site_news_block_config' => array (
 		'#type' => 'select',
 		'#title' => t('Teasers count'),
 		'#description' => t('Count of news teasers in region'),
-		'#default_value' => variable_get('si_block_config', NEWS_TEASERS_COUNT),
+		'#default_value' => variable_get('site_news_block_config', NEWS_TEASERS_COUNT),
 		'#options' => drupal_map_assoc(range(2, 10)),
 	));
 }
 
-function si_block_save($delta = '', $edit = array()) {
-  variable_set('si_block_config', $edit['si_block_conf']);
+function site_news_block_save($delta = '', $edit = array()) {
+  variable_set('site_news_block_config', $edit['site_news_block_config']);
 }
 
 function nodes_views_by_type($type, $limit = 5, $offset = 0) {
 	$views = '';
-
 	$nids = db_select('node', 'n')
 		->fields('n', array('nid', 'created'))
 		->condition('type', $type)
